@@ -25,65 +25,39 @@ pub fn main() {
 
             let tree_size = rows[x][y];
 
-            let mut visible_left = 0;
+            let visible_left = rows[x][..y].iter().rev()
+                                                .take_while(|&s| *s < tree_size)
+                                                .count() + 1;
 
-            for s in rows[x][..y].into_iter().rev() {
-                visible_left += 1;
 
-                if s >= &tree_size {
-                    break;
-                }
-            }
-
-            let mut visible_right = 0;
-
-            for s in rows[x][y+1..].into_iter() {
-                visible_right += 1;
-
-                if s >= &tree_size {
-                    break;
-                }
-            }
+            let visible_right = rows[x][y+1..].iter()
+                                            .take_while(|&s| *s < tree_size)
+                                            .count();
 
             let col: Vec<u32> = rows.iter()
                                 .map(|r| r[y])
                                 .collect();
 
-            let mut visible_top = 0;
+            let visible_top = col[..x].iter().rev()
+                                            .take_while(|&s| *s < tree_size)
+                                            .count();
 
-            for s in col[..x].into_iter().rev() {
+            let visible_bottom = col[x+1..].iter()
+                                            .take_while(|&s| *s < tree_size)
+                                            .count();
 
-                visible_top += 1;
-
-                if s >= &tree_size {
-                    break;
-                }
-            }
-
-            let mut visible_bottom = 0;
-
-            for s in col[x+1..].into_iter() {
-                visible_bottom += 1;
-
-                if s >= &tree_size {
-                    break;
-                }
-            }
-
-            // let visible_left = pos_left.map_or(0, |p| p+1);
             let scenic_score = visible_left * visible_right * visible_top * visible_bottom;
 
             if max_scenic_score < scenic_score {
                 max_scenic_score = scenic_score;
             }
 
-            println!("Tree: [{},{}], Left: {visible_left}, Right: {visible_right}, Top: {visible_top}, Bottom: {visible_bottom}, Scenic score: {scenic_score}", x+1, y+1);
+            // println!("Tree: [{},{}], Left: {visible_left}, Right: {visible_right}, Top: {visible_top}, Bottom: {visible_bottom}, Scenic score: {scenic_score}", x+1, y+1);
         }
 
-        println!();
+        // println!();
     }
 
     println!("Max scenic score: {max_scenic_score}");
 }
-
 
